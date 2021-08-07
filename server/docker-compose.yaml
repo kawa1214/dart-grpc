@@ -1,0 +1,42 @@
+version: "3.4"
+services:
+  ### MySQL
+  db:
+    container_name: db
+    image: mysql:5.7
+    tty: true
+    command:
+      - --general-log=true
+      - --general-log-file=/var/tmp/general.log
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: "password"
+  ### DartServer
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: server
+    restart: always
+    container_name: server
+    volumes:
+      - ./db:/app/db
+    depends_on:
+      - db
+    ports:
+    - "5001:5001"
+    #container_name: server
+    #build:
+    #  context: .
+    #ports:
+    #  - "50051:5001"
+    #depends_on:
+    #  - db
+    #environment:
+    #  DB_HOST: "db"
+    #  DB_PORT: "3306"
