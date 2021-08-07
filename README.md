@@ -27,3 +27,9 @@ $ pub global activate protoc_plugin
 ```sh
 $ protoc --dart_out=grpc:lib/src/generated -Iprotos protos/helloworld.proto
 ```
+
+## grpc documents
+
+https://grpc.io/docs/what-is-grpc/introduction/
+
+https://grpc.io/docs/languages/dart/basics/
