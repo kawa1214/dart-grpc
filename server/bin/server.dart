@@ -1,5 +1,6 @@
 import 'package:grpc/grpc.dart';
 import 'package:server/src/generated/protos/helloworld.pbgrpc.dart';
+import 'package:server/src/app/static.dart' as app_static;
 
 class GreeterService extends GreeterServiceBase {
   @override
@@ -14,7 +15,7 @@ Future<void> main(List<String> args) async {
     const <Interceptor>[],
     CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
   );
-  await server.serve(port: 5001);
+  await server.serve(port: app_static.port);
   print('Server listening on http://localhost://${server.port}');
   print('port : ${server.port}');
 }
