@@ -9,7 +9,7 @@ cd server && docker-compose up -d
 or
 
 ```
-cd server && dart run
+cd server && dart run --enable-vm-service --disable-service-auth-codes
 ```
 
 ## start client
@@ -25,7 +25,7 @@ $ pub global activate protoc_plugin
 ```
 
 ```sh
-$ protoc --dart_out=grpc:lib/src/generated -Iprotos protos/helloworld.proto
+$ protoc --dart_out=grpc:lib/src/generated -Iprotos protos/*.proto
 ```
 
 ## grpc documents
@@ -33,8 +33,6 @@ $ protoc --dart_out=grpc:lib/src/generated -Iprotos protos/helloworld.proto
 https://grpc.io/docs/what-is-grpc/introduction/
 
 https://grpc.io/docs/languages/dart/basics/
-
----
 
 # gRPC introduction
 https://grpc.io/docs/what-is-grpc/introduction/
@@ -127,7 +125,34 @@ service RouteGuide {
 
 ```
 
+## サーバ
+
+RouteGuideには２つの機能がある
+  - サービス定義から生成されたインターフェイスの実装
+  - gRPCサーバを実行してクライアントからのリクエストをリッスンし，適切なサービス実装にdispatchする
+
+```dart
+class RouteGuideService extends RouteGuideServiceBase {
+    Future<Feature> getFeature(grpc.ServiceCall call, Point request) async {
+        // TODO
+    }
+
+    Stream<Feature> listFeatures(grpc.ServiceCall call, Rectangle request) async* {
+        // TODO
+    }
+
+    Future<RouteSummary> recordRoute(grpc.ServiceCall call, Stream<Point> request) async {
+        // TODO
+    }
+
+    Stream<RouteNote> routeChat(grpc.ServiceCall call, Stream<RouteNote> request) async* {
+        // TODO
+    }
+}
+```
 TODO:
 - [ ] チャット機能実装
 - [ ] ドキュメントの追加
 - [ ] DBの永続化
+
+https://christina04.hatenablog.com/entry/go-clean-architecture

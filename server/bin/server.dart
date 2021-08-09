@@ -5,20 +5,29 @@ import 'package:vm_service/utils.dart';
 import 'dart:developer' as dev;
 import 'package:vm_service/vm_service.dart';
 import 'package:vm_service/vm_service_io.dart';
-import 'package:server/src/generated/protos/helloworld.pbgrpc.dart';
 import 'package:server/src/app/static.dart' as app_static;
 import 'package:watcher/watcher.dart';
 
-class GreeterService extends GreeterServiceBase {
-  @override
-  Future<HelloReply> sayHello(ServiceCall call, HelloRequest request) async {
-    return HelloReply()..message = 'Hi! Hello, ${request.name}!';
-  }
-}
+import 'service/chat.dart';
+import 'service/greeter.dart';
 
 Future<void> main(List<String> args) async {
   await runServe();
   await autoReload();
+}
+
+Future<void> runServe() async {
+  final server = Server(
+    [
+      GreeterService(),
+      ChatService(),
+    ],
+    const <Interceptor>[],
+    CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
+  );
+  await server.serve(port: app_static.port);
+  print('Server listening on http://localhost://${server.port}');
+  print('port : ${server.port}');
 }
 
 Future<void> autoReload() async {
@@ -40,17 +49,6 @@ Future<void> autoReload() async {
       'You need to pass `--enable-vm-service --disable-service-auth-codes` to enable hot reload',
     );
   }
-}
-
-Future<void> runServe() async {
-  final server = Server(
-    [GreeterService()],
-    const <Interceptor>[],
-    CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
-  );
-  await server.serve(port: app_static.port);
-  print('Server listening on http://localhost://${server.port}');
-  print('port : ${server.port}');
 }
 
 class StdOutLog implements Log {

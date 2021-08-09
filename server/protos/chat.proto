@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.dart.chat";
+option java_outer_classname = "ChatProto";
+option objc_class_prefix = "HLW";
+
+package chat;
+
+// The greeting service definition.
+service Chat {
+  // Sends a greeting
+  rpc SayHello(ChatRequest) returns (ChatReplay) {}
+
+  rpc ListFeatures(ChatRequest) returns (stream Feature) {}
+
+  rpc puchChat(ChatRequest) returns (ChatReplay) {}
+}
+
+// The request message containing the user's name.
+message ChatRequest { string message = 1; }
+
+// The response message containing the greetings
+message ChatReplay { string message = 1; }
+
+message Feature { string message = 1; }
