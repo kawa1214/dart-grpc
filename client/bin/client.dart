@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:args/args.dart';
 import 'package:grpc/grpc.dart';
+
 import 'package:server/src/generated/chat.pbgrpc.dart';
+import 'package:server/src/generated/user.pb.dart';
 import 'dart:io';
 import 'package:collection/collection.dart';
 
@@ -8,7 +12,7 @@ Future<void> main(List<String> args) async {
   final parser = ArgParser()..addOption('name');
   final parsedArgs = parser.parse(args);
 
-  final name = parsedArgs['name'] ?? 'default';
+  final name = parsedArgs['name'] as String;
 
   final channel = ClientChannel(
     'localhost',
@@ -22,28 +26,18 @@ Future<void> main(List<String> args) async {
   );
 
   final chatClient = ChatClient(channel);
-  streamKeyboardEvent().listen((event) async {
-    switch (event) {
-      case KeyboardEvent.input:
-        print('メッセージを入力してください');
-        final input = readLine();
-        print('input: $input');
-        await chatClient.sayHello(ChatRequest(message: input));
-        return;
-      case KeyboardEvent.quiet:
-        // TODO: 終了する
-        return await channel.shutdown();
-      case KeyboardEvent.none:
-        return;
-    }
+  streamString().listen((event) async {
+    await chatClient.sayHello(ChatRequest(message: event));
   });
   try {
     final response = chatClient.listFeatures(
-      ChatRequest()..message = 'test',
+      UserRequest()
+        ..id = name
+        ..name = name,
       options: CallOptions(compression: const GzipCodec()),
     );
     await for (final e in response) {
-      print(e);
+      print(e.message);
     }
   } catch (e) {
     print('Caught error: $e');
@@ -58,10 +52,12 @@ String readLine() {
   return input;
 }
 
-Stream<KeyboardEvent> streamKeyboardEvent() {
-  final stream = stdin.asyncMap((event) {
-    final keyboardEvent = KeyboardEventExtension.fromIntList(event);
-    return keyboardEvent;
+Stream<String> streamString() {
+  final stream = stdin
+      .transform(utf8.decoder)
+      .transform(const LineSplitter())
+      .asyncMap((event) {
+    return event;
   });
   return stream;
 }

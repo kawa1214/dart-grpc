@@ -2,18 +2,19 @@ import 'dart:async';
 
 import 'package:grpc/grpc.dart';
 import 'package:server/src/generated/chat.pbgrpc.dart';
+import 'package:server/src/generated/user.pb.dart';
 
 class ChatService extends ChatServiceBase {
-  final _controller = StreamController<Feature>();
+  final _controller = StreamController<Feature>.broadcast();
 
   @override
   Future<ChatReplay> sayHello(ServiceCall call, ChatRequest request) async {
-    _controller.add(Feature(message: request.message));
+    _controller.sink.add(Feature(message: request.message));
     return ChatReplay()..message = 'Hi! Hello, ${request.message}!';
   }
 
   @override
-  Stream<Feature> listFeatures(ServiceCall call, ChatRequest request) async* {
+  Stream<Feature> listFeatures(ServiceCall call, UserRequest request) async* {
     await for (final item in _controller.stream) {
       yield item;
     }

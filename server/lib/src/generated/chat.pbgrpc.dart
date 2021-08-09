@@ -11,6 +11,7 @@ import 'dart:core' as $core;
 
 import 'package:grpc/service_api.dart' as $grpc;
 import 'chat.pb.dart' as $0;
+import 'user.pb.dart' as $1;
 export 'chat.pb.dart';
 
 class ChatClient extends $grpc.Client {
@@ -18,9 +19,9 @@ class ChatClient extends $grpc.Client {
       '/chat.Chat/SayHello',
       ($0.ChatRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.ChatReplay.fromBuffer(value));
-  static final _$listFeatures = $grpc.ClientMethod<$0.ChatRequest, $0.Feature>(
+  static final _$listFeatures = $grpc.ClientMethod<$1.UserRequest, $0.Feature>(
       '/chat.Chat/ListFeatures',
-      ($0.ChatRequest value) => value.writeToBuffer(),
+      ($1.UserRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.Feature.fromBuffer(value));
   static final _$puchChat = $grpc.ClientMethod<$0.ChatRequest, $0.ChatReplay>(
       '/chat.Chat/puchChat',
@@ -37,7 +38,7 @@ class ChatClient extends $grpc.Client {
     return $createUnaryCall(_$sayHello, request, options: options);
   }
 
-  $grpc.ResponseStream<$0.Feature> listFeatures($0.ChatRequest request,
+  $grpc.ResponseStream<$0.Feature> listFeatures($1.UserRequest request,
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(
         _$listFeatures, $async.Stream.fromIterable([request]),
@@ -61,12 +62,12 @@ abstract class ChatServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.ChatRequest.fromBuffer(value),
         ($0.ChatReplay value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.ChatRequest, $0.Feature>(
+    $addMethod($grpc.ServiceMethod<$1.UserRequest, $0.Feature>(
         'ListFeatures',
         listFeatures_Pre,
         false,
         true,
-        ($core.List<$core.int> value) => $0.ChatRequest.fromBuffer(value),
+        ($core.List<$core.int> value) => $1.UserRequest.fromBuffer(value),
         ($0.Feature value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.ChatRequest, $0.ChatReplay>(
         'puchChat',
@@ -83,7 +84,7 @@ abstract class ChatServiceBase extends $grpc.Service {
   }
 
   $async.Stream<$0.Feature> listFeatures_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.ChatRequest> request) async* {
+      $grpc.ServiceCall call, $async.Future<$1.UserRequest> request) async* {
     yield* listFeatures(call, await request);
   }
 
@@ -95,7 +96,7 @@ abstract class ChatServiceBase extends $grpc.Service {
   $async.Future<$0.ChatReplay> sayHello(
       $grpc.ServiceCall call, $0.ChatRequest request);
   $async.Stream<$0.Feature> listFeatures(
-      $grpc.ServiceCall call, $0.ChatRequest request);
+      $grpc.ServiceCall call, $1.UserRequest request);
   $async.Future<$0.ChatReplay> puchChat(
       $grpc.ServiceCall call, $0.ChatRequest request);
 }

@@ -7,12 +7,14 @@ option objc_class_prefix = "HLW";
 
 package chat;
 
+import "user.proto";
+
 // The greeting service definition.
 service Chat {
   // Sends a greeting
   rpc SayHello(ChatRequest) returns (ChatReplay) {}
 
-  rpc ListFeatures(ChatRequest) returns (stream Feature) {}
+  rpc ListFeatures(user.UserRequest) returns (stream Feature) {}
 
   rpc puchChat(ChatRequest) returns (ChatReplay) {}
 }
