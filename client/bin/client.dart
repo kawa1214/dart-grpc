@@ -14,6 +14,8 @@ Future<void> main(List<String> args) async {
 
   final name = parsedArgs['name'] as String;
 
+  final user = UserRequest(id: name, name: name);
+
   final channel = ClientChannel(
     'localhost',
     port: 5001,
@@ -26,18 +28,25 @@ Future<void> main(List<String> args) async {
   );
 
   final chatClient = ChatClient(channel);
+
   streamString().listen((event) async {
-    await chatClient.sayHello(ChatRequest(message: event));
+    await chatClient.createPost(PostRequest(
+      user: user,
+      message: MessageRequest(message: event),
+    ));
   });
+
   try {
-    final response = chatClient.listFeatures(
+    final response = chatClient.listPosts(
       UserRequest()
         ..id = name
         ..name = name,
       options: CallOptions(compression: const GzipCodec()),
     );
     await for (final e in response) {
-      print(e.message);
+      if (e.user.id != user.id) {
+        print('${e.user.name}: ${e.message.message}');
+      }
     }
   } catch (e) {
     print('Caught error: $e');

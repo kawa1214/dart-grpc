@@ -30,6 +30,10 @@ $ protoc --dart_out=grpc:lib/src/generated -Iprotos protos/*.proto
 
 ## grpc documents
 
+命名規則
+
+https://cloud.google.com/apis/design/naming_convention
+
 https://grpc.io/docs/what-is-grpc/introduction/
 
 https://grpc.io/docs/languages/dart/basics/

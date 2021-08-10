@@ -5,23 +5,24 @@ import 'package:server/src/generated/chat.pbgrpc.dart';
 import 'package:server/src/generated/user.pb.dart';
 
 class ChatService extends ChatServiceBase {
-  final _controller = StreamController<Feature>.broadcast();
+  final _controller = StreamController<ListPostsReplay>.broadcast();
 
   @override
-  Future<ChatReplay> sayHello(ServiceCall call, ChatRequest request) async {
-    _controller.sink.add(Feature(message: request.message));
-    return ChatReplay()..message = 'Hi! Hello, ${request.message}!';
-  }
-
-  @override
-  Stream<Feature> listFeatures(ServiceCall call, UserRequest request) async* {
-    await for (final item in _controller.stream) {
-      yield item;
+  Future<PostReplay> createPost(ServiceCall call, PostRequest request) async {
+    try {
+      _controller.sink
+          .add(ListPostsReplay(message: request.message, user: request.user));
+      return PostReplay(succeeded: true);
+    } catch (e) {
+      return PostReplay(succeeded: false);
     }
   }
 
   @override
-  Future<ChatReplay> puchChat(ServiceCall call, ChatRequest request) async {
-    return ChatReplay()..message = 'Hi! Hello, ${request.message}!';
+  Stream<ListPostsReplay> listPosts(
+      ServiceCall call, UserRequest request) async* {
+    await for (final item in _controller.stream) {
+      yield item;
+    }
   }
 }
